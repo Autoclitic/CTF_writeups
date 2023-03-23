@@ -6,10 +6,13 @@ We are going to use the Docker image provided to us for Passman. Just so the fla
 ---
 
 Going to the website, we can see the login screen
+
 ![login screen](./Screenshots/login.png)
 
 Lets run `nmap -sC -sV` and see what is open.
-![nmap](./Screenshots/nmap_scan.png) 
+
+![nmap](./Screenshots/nmap_scan.png)
+
 For my machine, we can see a Node.js server running an Express middleware service.
 Running other nmaps won't help because all of the other ports are closed.
 
@@ -37,7 +40,9 @@ Accept-Language: en-US,en;q=0.9
 Connection: close
 ```
 Okay! So we see the header is going to a /registery file. Which leads us to this webpage:
+
 ![register](./Screenshots/register.png)
+
 That's great! We can see that the website can lets us create an account. When we create an account, and get the HTTP request, we can see an interesting addition to the request.
 
 
@@ -55,11 +60,14 @@ The commands we are running do the following:
 
 
 After running the command, we get the following:
+
 ![graphw00f](./Screenshots/graphw00f.png)
+
 Which is great! Because it confirms our thoughts, and leads us to the next step in the process.
 
 
 After we finish creating the account, and login, we can finally see the dashboard. 
+
 ![dashboard](./Screenshots/dashboard.png)
 
 
@@ -77,19 +85,23 @@ If you haven't noticed yet, we can see that all of the requests we send are goin
 So knowing that we can send in our own requests with GraphQL, we can take a look at the provided code and check out that /graphql directory.
 
 Running `tree` in our web_passman directory will show the following layout:
+
 ![tree](./Screenshots/passman_tree.png)
 
 Unfortunately, the /graphql we saw earlier is not here. That is because it was routing the front end request through to the server. We only need to check out the `/helpers` folder because it has the files we need to look at.
 
 Running an `ls -laph` command will reveal the file that we want to look at, which is the GraphqlHelper.js.
+
 ![helpers](./Screenshots/helpers.png)
 
 Opening up the GraphqlHelper.js in your favorite code editor/IDE, we can see how GraphQL interacts with POST requests on the Passman website. The most notable things though are when a request is being processed, and the request to change a password.
 
 ![exploit](./Screenshots/exploit.png)
+
 If we look at this snippit, we can see that the code only checks if the request is being made by an already authenticated user. Which can be problematic if there is no checking mechanism in place.
 
 The function this is attached to is:
+
 ![function](./Screenshots/function.png)
 
 This function is called when a user is updating their password. Which is difficult to tell because the website does not show that functionality. 
@@ -133,8 +145,10 @@ Into this request
 ```
 
 After sending the request, it should come back like this:
+
 ![right_query](./Screenshots/right_query.png)
 
 If it looks like that then great!! We can now login to the admin page, and retrieve the password.
+
 ![flag](./Screenshots/flag.png)
 
